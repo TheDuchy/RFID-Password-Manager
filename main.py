@@ -1,12 +1,14 @@
+# Written by Jan "Duchy" Neduchal 2018
 import serial
 import platform
 import sys
 import time
 import hashlib #sha256
-from config.py import * #passwords
+from config import * #passwords
 from tkinter import Tk #clipboard
+import getpass # password prompt
 
-from Crypto import Random
+from Crypto.Random import random
 from Crypto.Cipher import AES
 import base64
 
@@ -65,7 +67,7 @@ def main():
             ard.port = input("> ")
     print("CONNECTED")
     print("Enter your password")
-    password = input("> ")
+    password = getpass.getpass("> ")
     print("Authenticating please stand-by..")
     password = hash_SHA256(password)
     ard.write(password)
@@ -102,8 +104,8 @@ def main():
             plaintext = decrypt(pass_dict[to_decrypt], SECRET)
             copy_to_clipboard(plaintext)
             print("Copied the password to clipboard..")
-
-try:
-    main()
-except KeyboardInterrupt:
-    sys.exit(0)
+if __name__ == "__main__":
+    try:
+        main()
+    except KeyboardInterrupt:
+        sys.exit(0)
