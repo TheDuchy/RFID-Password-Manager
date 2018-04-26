@@ -47,12 +47,11 @@ def main():
         else:
             continue
     print("Now we can encrypt the passwords using the master key and an UID")
-    print("Use a default example sketch in the arduino PN532 library to read the 4 byte UID")
-    print("PW Manager currently supports 4 byte UIDs only, since they are more widespread")
+    print("Use a default example sketch in the arduino PN532 library to read the UID")
     print("Please enter the UID you want to use to encrypt your passwords")
     while True:
         uid = input("> ")
-        if len(uid) == 4:
+        if len(uid) == 8:
             break
         else:
             print("Wrong UID format, it needs to be XXXX (4 bytes)")

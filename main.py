@@ -58,7 +58,7 @@ def main():
     elif OScheck() == "osx":
         ard.port = "/dev/cu.usbmodem1411"
     print("Starting on port "+ard.port)
-    ard.timeout = 3
+    ard.timeout = 10
     while ard.is_open == False:
         try:
             ard.open()
@@ -72,7 +72,13 @@ def main():
     password = hash_SHA256(password)
     ard.write(password)
     time.sleep(0.2)
-    response = ard.readline()
+    for i in range(3):
+        try:
+            response = ard.readline().decode('ASCII')
+            break
+        except TypeError:
+            print("Getting ACK timed out")
+            print("Try number "+ i)
     if response == "ACK-OK":
         print("Got ACK-OK.. Authenticated!")
     else:
@@ -81,12 +87,12 @@ def main():
         sys.exit(-1)
     while True:
         print("Listening for RFID tag UID to decrypt the passwords")
-        response = ard.readline()
+        response = ard.readline().decode('ASCII')
         if response == "TERM":
             print("Connection was terminated!")
             ard.close()
             sys.exit(0)
-        elif len(response) == 4:
+        elif len(response) == 8: # 4 bytes only
             print("Detected UID")
             SECRET = xor(hash_SHA256(response), password)
             if len(pass_dict) != 0:
@@ -103,7 +109,9 @@ def main():
                 sys.exit(-1)
             plaintext = decrypt(pass_dict[to_decrypt], SECRET)
             copy_to_clipboard(plaintext)
-            print("Copied the password to clipboard..")
+        else:
+            print("Failed to load an UID")
+            continue
 if __name__ == "__main__":
     try:
         main()
