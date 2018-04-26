@@ -90,6 +90,7 @@ def main():
         response = ard.readline().decode('ASCII')
         if response == "TERM":
             print("Connection was terminated!")
+            print("Restart the Arduino to continue...")
             ard.close()
             sys.exit(0)
         elif len(response) == 8: # 4 bytes only
